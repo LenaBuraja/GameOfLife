@@ -28,5 +28,18 @@ namespace GameOfLife {
             }
             return cells;
         }
+
+        public void ToString(int n, int m, int[ ][ ] array) {
+            Console.WriteLine( );
+            for (int row = 0; row < n; row++) {
+                for (int column = 0; column < m; column++) {
+                    int result = (this.arrayCell[column * row].isLiving) ? 1 : 0;
+                    Console.Write($"{result}  ");
+                }
+                Console.WriteLine( );
+            }
+            Console.Write("***************************");
+            Console.WriteLine( );
+        }
     }
 }
