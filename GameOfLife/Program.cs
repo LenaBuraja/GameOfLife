@@ -73,8 +73,8 @@ namespace GameOfLife {
                             int correctX = x;
                             if (correctY >= n) correctY = 0;
                             if (correctY < 0) correctY = n - 1;
-                            if (correctX >= n) correctX = 0;
-                            if (correctX < 0) correctX = n - 1;
+                            if (correctX >= m) correctX = 0;
+                            if (correctX < 0) correctX = m - 1;
                             livingCellsNumber += (inArrayCells[correctY * m + correctX].isLiving) ? 1 : 0;
                         }
                     }
@@ -85,9 +85,11 @@ namespace GameOfLife {
                     } else {
                         isLiving = (livingCellsNumber == 3) ? true : false;
                     }
+                    Console.Write(livingCellsNumber + " ");
                     Cell addCell = new Cell(column, row, isLiving);
                     outArrayCells[row * m + column] = addCell;
                 }
+                Console.Write("\n");
             }
             return outArrayCells;
         }
