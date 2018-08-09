@@ -4,18 +4,6 @@ using System.IO;
 namespace GameOfLife {
     class Program {
 
-        static void Print(int n, int m, int[ ][ ] array) {
-            Console.WriteLine( );
-            for (int row = 0; row < n; row++) {
-                for (int column = 0; column < m; column++) {
-                    Console.Write($"{array[row][column]}  ");
-                }
-                Console.WriteLine( );
-            }
-            Console.Write("***************************");
-            Console.WriteLine( );
-        }
-
         static String ReadFile(String path, out int n, out int m) {
             n = -1;
             m = -1;
@@ -74,10 +62,8 @@ namespace GameOfLife {
             return array;
         }
 
-        static int[][] OneStep(int n, int m, int[][] inArray) {
-            int[ ][ ] outArray = new int[n][ ];
-            outArray = SetArray(n, m);
-
+        static Cell[] OneStep(int n, int m, Cell[] inArrayCells) {
+            Cell[ ] outArrayCells = new Cell[n * m];
             for (int row = 0; row < n; row++) {
                 for (int column = 0; column < m; column++) {
                     int livingCellsNumber = 0;
@@ -89,35 +75,41 @@ namespace GameOfLife {
                             if (correctY < 0) correctY = n - 1;
                             if (correctX >= n) correctX = 0;
                             if (correctX < 0) correctX = n - 1;
-                            livingCellsNumber += (inArray[correctY][correctX] == 1) ? 1 : 0;
+                            livingCellsNumber += (inArrayCells[correctY * m + correctX].isLiving) ? 1 : 0;
                         }
                     }
-                    if (inArray[row][column] == 1) {
+                    Boolean isLiving;
+                    if (inArrayCells[row * m + column].isLiving) {
                         livingCellsNumber--;
-                        outArray[row][column] = (livingCellsNumber != 2 && livingCellsNumber != 3) ? 0 : 1;
+                        isLiving = (livingCellsNumber != 2 && livingCellsNumber != 3) ? false : true;
                     } else {
-                        outArray[row][column] = (livingCellsNumber == 3) ? 1 : 0;
+                        isLiving = (livingCellsNumber == 3) ? true : false;
                     }
+                    Cell addCell = new Cell(column, row, isLiving);
+                    outArrayCells[row * m + column] = addCell;
                 }
             }
-            return outArray;
+            return outArrayCells;
         }
 
         static void Main(string[ ] args) {
-            Console.Write("Enter path to file: ");
-            String path = Console.ReadLine( );
+            //Console.Write("Enter path to file: ");
+            //String path = Console.ReadLine( );
+            String path = @"F:\\myFile.txt";
             int n = 0, m = 0;
             String stringArray = ReadFile(path, out n, out m);
             if (stringArray != "") {
-                int[ ][ ] startArray = new int[n][ ];
-                startArray = SetArrayFromString(n, m, stringArray);
-                Print(n, m, startArray);
-               while(true) {
-                    int[ ][ ] nextArray = OneStep(n, m, startArray);
-                    startArray = nextArray;
-                    Print(n, m, startArray);
+                Board board = new Board(m, n, stringArray);
+                Console.Write(board.ToString( ));
+                while (true) {
+                    Board newBoard = new Board(m, n);
+                    newBoard.arrayCell = OneStep(n, m, board.arrayCell);
+                    board.arrayCell = newBoard.arrayCell;
+                    Console.Write(board.ToString( ));
+                    if (board.isEquals(new Board(m, n))) break;
                     Console.ReadLine( );
                 }
+                
             }
                 Console.ReadLine( );
         }
